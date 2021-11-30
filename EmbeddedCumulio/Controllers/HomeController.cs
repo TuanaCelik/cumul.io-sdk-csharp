@@ -10,7 +10,7 @@ namespace EmbeddedCumulio.Controllers
 {
   public class HomeController : Controller
   {
-    public async ActionResult Index()
+    public ActionResult Index()
     {
 
       // 1. Connect to Cumul.io API
