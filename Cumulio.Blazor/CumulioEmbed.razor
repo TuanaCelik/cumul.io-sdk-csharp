@@ -1,0 +1,40 @@
+﻿@using Microsoft.JSInterop.Implementation
+@using Microsoft.JSInterop
+
+@inject IJSRuntime JSRuntime
+
+@if (Properties != null)
+{
+    <cumulio-dashboard @ref="cumulioDashboard"
+                   dashboardId="@Properties.DashboardId"
+                   authKey="@Properties.AuthKey"
+                   authToken="@Properties.AuthToken">
+    </cumulio-dashboard>
+}
+
+@code {
+    private ElementReference cumulioDashboard;
+    private IJSObjectReference? jsModule;
+    [Parameter]
+    public CumulioDashboardProperties? Properties { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitWebComponentAsync();
+        }
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Properties != null && jsModule != null)
+        {
+            await jsModule.InvokeVoidAsync("loadCumulioDashboard", cumulioDashboard, Properties);
+        }
+    }
+
+    private async Task InitWebComponentAsync()
+    {
+        jsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/Cumulio.Blazor/CumulioEmbed.razor.js");
+    }
+}

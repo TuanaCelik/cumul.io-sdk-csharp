@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Dynamic;
-using System.Net.Http.Json;
 using System.Text;
 
 namespace Cumulio.Http;
@@ -12,13 +11,8 @@ public class CumulioHttpClient
     private readonly string apiVersion = "0.1.0";
     private readonly string port = "443";
 
-    //Demo account
-    //private readonly string apiKey = "d4f04e03-d90a-47fc-a676-d50e97be09db";
-    //private readonly string apiToken = "bw9F62m3CwuKO66uNH1imYrSNqfjpo4twieKSCUxZMHuIJ4RtQFVkNTxk2Qiy2S80AS89vkstVrCYhoz4RKBjW1LN9BUcjGL7wol28Jzk0uCD1B7N9lbOIWbEBMTMKqU1d6BVjiXD6MtRVShKyEwz6";
-
-    //Netrush account
-    private string apiKey = "a54e6eea-14d7-4066-8cc4-6bb2ffbb3bb8";
-    private string apiToken = "aK9HWf0J7dIEilLCob1MuBdDT9giPaQe1OI6RGj6aFklvDd4iU5Gab6CNUbyttxqQC2QF6pMal7mv9gC1HwmEtUFqnkt2cC0tFVc1Cnzn2OngOOT1Zm6HG3ShJSocPYj6Ek2zOl5nThLsQDltevveZ";
+    private readonly string apiKey = string.Empty;
+    private readonly string apiToken = string.Empty;
 
     public CumulioHttpClient(HostRegion hostRegion, string apiKey, string apiToken, string apiVersion = "0.1.0", string port = "443")
     {
@@ -60,8 +54,9 @@ public class CumulioHttpClient
     {
     }
 
+    #region Core
     /// <summary>
-    /// 
+    /// Sends the call to the API
     /// </summary>
     /// <param name="resource">The resource or entity type you are performing the action on. IE: authorization</param>
     /// <param name="httpMethod">The HttpMethod used to submit the request</param>
@@ -101,8 +96,18 @@ public class CumulioHttpClient
         }
     }
 
-    private async Task<dynamic?> CreateAsync(string resource, ExpandoObject properties, List<ExpandoObject>? associations = null)
+    public async Task<dynamic?> CreateAsync(string resource, ExpandoObject properties, List<ExpandoObject>? associations = null)
     {
+        if (string.IsNullOrEmpty(resource))
+        {
+            throw new ArgumentException($"'{nameof(resource)}' cannot be null or empty.", nameof(resource));
+        }
+
+        if (properties is null)
+        {
+            throw new ArgumentNullException(nameof(properties));
+        }
+
         var query = new CumulioQuery
         {
             Action = "create",
@@ -113,6 +118,228 @@ public class CumulioHttpClient
         return await SendAsync(resource, HttpMethod.Post, query);
     }
 
+    public dynamic? Get(string resource, ExpandoObject filter)
+    {
+        try
+        {
+            return GetAsync(resource, filter).Result;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<dynamic?> GetAsync(string resource, ExpandoObject filter)
+    {
+        if (string.IsNullOrEmpty(resource))
+        {
+            throw new ArgumentException($"'{nameof(resource)}' cannot be null or empty.", nameof(resource));
+        }
+
+        if (filter is null)
+        {
+            throw new ArgumentNullException(nameof(filter));
+        }
+
+        var query = new CumulioQuery
+        {
+            Action = "get",
+            Find = filter
+        };
+
+        return await SendAsync(resource, HttpMethod.Post, query);
+    }
+
+    public dynamic? Delete(string resource, string id)
+    {
+        try
+        {
+            return DeleteAsync(resource, id).Result;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<dynamic?> DeleteAsync(string resource, string id)
+    {
+        if (string.IsNullOrEmpty(resource))
+        {
+            throw new ArgumentException($"'{nameof(resource)}' cannot be null or empty.", nameof(resource));
+        }
+
+        if (string.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException($"'{nameof(id)}' cannot be null or empty.", nameof(id));
+        }
+
+        var query = new CumulioQuery
+        {
+            Action = "delete",
+            Id = id
+        };
+
+        return await SendAsync(resource, HttpMethod.Delete, query);
+    }
+
+    public dynamic? Update(string resource, string id, ExpandoObject properties)
+    {
+        try
+        {
+            return UpdateAsync(resource, id, properties).Result;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<dynamic?> UpdateAsync(string resource, string id, ExpandoObject properties)
+    {
+        if (string.IsNullOrEmpty(resource))
+        {
+            throw new ArgumentException($"'{nameof(resource)}' cannot be null or empty.", nameof(resource));
+        }
+
+        if (string.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException($"'{nameof(id)}' cannot be null or empty.", nameof(id));
+        }
+
+        if (properties is null)
+        {
+            throw new ArgumentNullException(nameof(properties));
+        }
+
+        var query = new CumulioQuery
+        {
+            Action = "update",
+            Id = id,
+            Properties = properties
+        };
+
+        return await SendAsync(resource, HttpMethod.Patch, query);
+    }
+
+    public dynamic? Associate(string resource, string id, string associationRole, string associationId, ExpandoObject properties)
+    {
+        try
+        {
+            return AssociateAsync(resource, id, associationRole, associationId, properties).Result;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<dynamic?> AssociateAsync(string resource, string id, string associationRole, string associationId, ExpandoObject properties)
+    {
+        if (string.IsNullOrEmpty(resource))
+        {
+            throw new ArgumentException($"'{nameof(resource)}' cannot be null or empty.", nameof(resource));
+        }
+
+        if (string.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException($"'{nameof(id)}' cannot be null or empty.", nameof(id));
+        }
+
+        if (string.IsNullOrEmpty(associationRole))
+        {
+            throw new ArgumentException($"'{nameof(associationRole)}' cannot be null or empty.", nameof(associationRole));
+        }
+
+        if (string.IsNullOrEmpty(associationId))
+        {
+            throw new ArgumentException($"'{nameof(associationId)}' cannot be null or empty.", nameof(associationId));
+        }
+
+        if (properties is null)
+        {
+            throw new ArgumentNullException(nameof(properties));
+        }
+
+        dynamic association = new ExpandoObject();
+        association.role = associationRole;
+        association.id = associationId;
+
+        var query = new CumulioQuery
+        {
+            Action = "associate",
+            Id = id,
+            Resource = association,
+            Properties = properties
+        };
+
+        return await SendAsync(resource, HttpMethod.Post, query);
+    }
+
+    public dynamic? Dissociate(string resource, string id, string associationRole, string associationId)
+    {
+        try
+        {
+            return DissociateAsync(resource, id, associationRole, associationId).Result;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<dynamic?> DissociateAsync(string resource, string id, string associationRole, string associationId)
+    {
+        if (string.IsNullOrEmpty(resource))
+        {
+            throw new ArgumentException($"'{nameof(resource)}' cannot be null or empty.", nameof(resource));
+        }
+
+        if (string.IsNullOrEmpty(id))
+        {
+            throw new ArgumentException($"'{nameof(id)}' cannot be null or empty.", nameof(id));
+        }
+
+        if (string.IsNullOrEmpty(associationRole))
+        {
+            throw new ArgumentException($"'{nameof(associationRole)}' cannot be null or empty.", nameof(associationRole));
+        }
+
+        if (string.IsNullOrEmpty(associationId))
+        {
+            throw new ArgumentException($"'{nameof(associationId)}' cannot be null or empty.", nameof(associationId));
+        }
+
+        dynamic association = new ExpandoObject();
+        association.role = associationRole;
+        association.id = associationId;
+
+        var query = new CumulioQuery
+        {
+            Action = "dissociate",
+            Id = id,
+            Resource = association
+        };
+
+        return await SendAsync(resource, HttpMethod.Post, query);
+    }
+    #endregion
+
+    #region Services
+    public dynamic? QueryData(ExpandoObject filter)
+    {
+        try
+        {
+            return Get("data", filter);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+    public async Task<dynamic?> QueryDataAsync(ExpandoObject filter)
+    {
+        return await GetAsync("data", filter);
+    }
+    #endregion
+
+    #region Implementations
     public async Task<dynamic?> CreateAuthorizationAsync(string username, string name, string email, IEnumerable<string> securables, string expiry = "24 hours", string inactivityInterval = "10 minutes")
     {
         dynamic properties = new ExpandoObject();
@@ -123,7 +350,8 @@ public class CumulioHttpClient
         properties.name = name;
         properties.email = email;
         properties.inactivity_interval = inactivityInterval;
-        
-        return await CreateAsync("authorization", properties);        
+
+        return await CreateAsync("authorization", properties);
     }
+    #endregion
 }
