@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cumulio", "Cumulio API\Cumu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbeddedCumulio", "EmbeddedCumulio\EmbeddedCumulio.csproj", "{F38F8CAE-E996-4F5B-B1B0-93E05A07F57B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cumulio.Blazor", "Cumulio.Blazor\Cumulio.Blazor.csproj", "{9117E916-BCBC-46D8-8ACA-B79E927C276C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cumulio.Http", "Cumulio.Http\Cumulio.Http.csproj", "{A6D763F3-72A1-4276-A796-A124F046E840}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{F38F8CAE-E996-4F5B-B1B0-93E05A07F57B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F38F8CAE-E996-4F5B-B1B0-93E05A07F57B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F38F8CAE-E996-4F5B-B1B0-93E05A07F57B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9117E916-BCBC-46D8-8ACA-B79E927C276C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9117E916-BCBC-46D8-8ACA-B79E927C276C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9117E916-BCBC-46D8-8ACA-B79E927C276C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9117E916-BCBC-46D8-8ACA-B79E927C276C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A6D763F3-72A1-4276-A796-A124F046E840}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A6D763F3-72A1-4276-A796-A124F046E840}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6D763F3-72A1-4276-A796-A124F046E840}.Release|Any CPU.ActiveCfg = Release|Any CPU
